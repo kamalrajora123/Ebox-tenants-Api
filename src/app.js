@@ -51,8 +51,8 @@ app.use((req, res) => res.status(404).send({
   message: `Sorry, requested URL ${req.method} ${req.url} not found!`,
 }));
 
-console.log('sss');
+// console.log('sss');
 // catch all errors
 app.use(errorHandler);
-console.log('test');
+// console.log('test');
 module.exports = app;

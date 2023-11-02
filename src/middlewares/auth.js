@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
   // console.log('test');  
   let token = req.header('Authorization') || req.header('authorization');
   if (!token) throw new UnauthorizedError();
-  console.log(token);
+  // console.log(token);
   token = req.headers.authorization.replace('Bearer ', '');
   try {
     const payload = await verifyJWT({
@@ -29,6 +29,6 @@ module.exports = async (req, res, next) => {
     throw new UnauthorizedError('Token expired');
   }
   // check if user is not blocked and exist
- // await AuthService.doCheckUserExist({ email: req.user.email });
+  // await AuthService.doCheckUserExist({ email: req.user.email });
   return next();
 };

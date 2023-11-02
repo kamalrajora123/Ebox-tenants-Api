@@ -9,7 +9,6 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING,
     altemail: DataTypes.STRING,
     address: DataTypes.STRING,
-
     status: {
       type: DataTypes.STRING,
       defaultValue: "Y",

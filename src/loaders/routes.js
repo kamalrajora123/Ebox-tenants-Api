@@ -74,6 +74,19 @@ const {
   SubscriptionRoutes,
 } = require('../subscription');
 
+// Vendors
+const { VendorRoutes } = require('../Maintenance Manager/Vendors')
+
+
+
+
+
+
+
+
+
+
+
 const Auth = require('../middlewares/auth');
 const Authorize = require('../middlewares/authorize');
 module.exports = function getRoutes(app) {
@@ -100,6 +113,11 @@ module.exports = function getRoutes(app) {
   app.use('/api/v1/subscription', Auth, SubscriptionRoutes);
   app.use('/api/v1/advertisementpackage', Auth, AdvertisementPackage);
   app.use('/api/v1/advertisementsubscription', advertisementsubscription);
+
+
+  // Vendor  routes
+  app.use('/api/v1/maintenance', Auth, VendorRoutes);
+
 
 
 };
