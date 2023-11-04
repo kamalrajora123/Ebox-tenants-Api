@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     lname: DataTypes.STRING,
     description: DataTypes.STRING,
     image: DataTypes.STRING,
-    account_id: DataTypes.STRING,
+    account_id: DataTypes.INTEGER,
     accont_num: DataTypes.STRING,
     altemail: DataTypes.STRING,
     address: DataTypes.STRING,
@@ -19,13 +19,20 @@ module.exports = (sequelize, DataTypes) => {
     cat_id: DataTypes.STRING,
     state_id: DataTypes.STRING,
     city_id: DataTypes.STRING,
-    country_code: DataTypes.STRING,
+    country_code: DataTypes.INTEGER,
     mobileno: DataTypes.STRING,
     company_url: DataTypes.STRING,
     role_id: DataTypes.STRING,
     companyname: DataTypes.STRING,
+    alt_name: DataTypes.STRING,
+    alt_lname: DataTypes.STRING,
     expirationdate: DataTypes.DATE,
-
+    dif_add1:DataTypes.STRING,
+    dif_add2:DataTypes.STRING,
+    dif_city_id:DataTypes.STRING,
+    dif_state_id:DataTypes.STRING,
+    dif_zip:DataTypes.STRING,
+    dif_cntry_id:DataTypes.INTEGER,
     status: {
       type: DataTypes.STRING,
       defaultValue: "Y",
@@ -34,5 +41,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     tableName: 'cms_users',
   });
+
+
+  Vendor.associate = function (models) {
+    Vendor.belongsTo(models.Vendorcategory, {
+      foreignKey: 'cat_id',
+    });
+  }
+
   return Vendor;
 }

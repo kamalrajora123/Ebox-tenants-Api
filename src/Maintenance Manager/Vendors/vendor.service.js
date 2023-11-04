@@ -4,10 +4,13 @@ const { NotFoundError, BadRequestError } = require('../../utils/api-errors');
 
 //Add Vendor Category
 const doCategory = async ({ name }) => {
+  const existingCategory = await Vendorcategory.findOne({ where: { name } });
+  if (existingCategory) {
+    throw new BadRequestError("Category With The Same Name Already Exists");
+  }
   const category = await Vendorcategory.create({
     name,
   });
-
   return {
     categoryId: category.id
   };
@@ -15,9 +18,12 @@ const doCategory = async ({ name }) => {
 
 //view Vendor Category
 const doGetCategory = async ({
+  Vendor,
+  BadRequestError
 }) => {
   const categories = await Vendorcategory.findAll(
     {
+      include: { model: Vendor },
       order: [["createdAt", "DESC"]],
     }
   );
@@ -29,8 +35,20 @@ const doGetCategory = async ({
 const doUpdateCategory = async ({
   id,
   BadRequestError,
-  categorydata
+  categorydata,
 }) => {
+  const { name } = categorydata;
+
+  const existingCategory = await Vendorcategory.findOne({
+    where: {
+      name: name,
+      id: { [Op.ne]: id } // exclude the current 
+    }
+  });
+  if (existingCategory) {
+    throw new BadRequestError(" Category With The Same Name Already Exists");
+  }
+
   const data = await Vendorcategory.update(categorydata,
     {
       where: {
@@ -75,6 +93,24 @@ const doDeleteCategory = async ({
   if (data == 0) throw new BadRequestError("Id Not Match");
   return data[0];
 };
+// find the vendor_id for deleted
+const doCheckVendorforcategory = async ({
+  cat_id,
+}) => {
+  const vndrs = await Vendor.findOne({
+    where: {
+      cat_id
+    },
+  });
+  if (!vndrs) throw new NotFoundError('Agent not found!');
+  return vndrs;
+};
+
+
+
+
+
+
 
 
 //Add Vendor
@@ -102,7 +138,20 @@ const doVendor = async ({ name,
   role_id,
   companyname,
   expirationdate,
+  alt_name,
+  alt_lname,
+  dif_add1,
+  dif_add2,
+  dif_city_id,
+  dif_state_id,
+  dif_zip,
+  dif_cntry_id,
 }) => {
+
+  const existingVendor = await Vendor.findOne({ where: { [Op.or]: [{ username }, { mobile }] } });
+  if (existingVendor) {
+    throw new BadRequestError("The Username And Mobile Number Already Exists. Please Select Another Username And Mobile Number");
+  }
   const vendor = await Vendor.create({
     name,
     username,
@@ -127,7 +176,16 @@ const doVendor = async ({ name,
     country_code,
     role_id,
     companyname,
-    expirationdate
+    expirationdate,
+    alt_name,
+    alt_lname,
+    dif_add1,
+    dif_add2,
+    dif_city_id,
+    dif_state_id,
+    dif_zip,
+    dif_cntry_id,
+
   });
 
   return {
@@ -138,11 +196,13 @@ const doVendor = async ({ name,
 
 //view Vendor
 const doGetVendor = async ({
+  Vendorcategory
 }) => {
   const vendoress = await Vendor.findAll(
     {
       where: { role_id: 5 },
       order: [["createdAt", "DESC"]],
+      include: { model: Vendorcategory }
     }
   );
   return vendoress
@@ -155,9 +215,12 @@ const Op = Sequelize.Op;
 const doSearchVendor = async ({
   name,
   username,
-  company_url,
+  companyname,
   status,
+  cat_id,
+  mobile,
   Vendor,
+  Vendorcategory,
   BadRequestError,
 }) => {
 
@@ -167,8 +230,12 @@ const doSearchVendor = async ({
   }
   if (username) {
     newobject.username = { [Op.like]: `%${username}%` }
-  } if (company_url) {
-    newobject.company_url = { [Op.like]: `%${company_url}%` }
+  } if (companyname) {
+    newobject.companyname = { [Op.like]: `%${companyname}%` }
+  } if (cat_id) {
+    newobject.cat_id = { [Op.like]: `%${cat_id}%` }
+  } if (mobile) {
+    newobject.mobile = { [Op.like]: `%${mobile}%` }
   }
   if (status) {
     newobject.status = status
@@ -177,7 +244,9 @@ const doSearchVendor = async ({
   console.log("newobject", newobject);
   const data = await Vendor.findAll({
     where: newobject,
-    order: [['name', 'ASC']],
+    // order: [['name', 'ASC']],
+    order: [["createdAt", "DESC"]],
+    include: { model: Vendorcategory },
   });
   if (data[0] == 0) throw new BadRequestError("Data Not Match");
   return data;
@@ -189,6 +258,21 @@ const doUpdatevendor = async ({
   BadRequestError,
   vendordata
 }) => {
+  // console.log("vendordata", vendordata.username)
+  const existingVendor = await Vendor.findOne({
+    where: {
+      id: { [Op.ne]: id }, // exclude the current 
+      [Op.or]: [
+        { username: vendordata.username },
+        { mobile: vendordata.mobile }
+      ],
+
+    }
+  });
+  if (existingVendor) {
+    throw new BadRequestError("The Username And Mobile Number Already Exists. Please Select Another Username And Mobile Number");
+  }
+
   const data = await Vendor.update(vendordata,
     {
       where: {
@@ -226,7 +310,6 @@ const doDeleteVendor = async ({
 
 
 
-
 module.exports = {
   doCategory,
   doGetCategory,
@@ -238,5 +321,6 @@ module.exports = {
   doUpdatevendor,
   doDeleteVendor,
   doStatus,
+  doCheckVendorforcategory
 };
 

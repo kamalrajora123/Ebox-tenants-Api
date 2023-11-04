@@ -7,7 +7,7 @@ const router = require("express").Router();
 //   INVITATION_TOKEN_EXPIRES_IN,
 // } = require("config");
 
-const { property, GALLERY, propertyperealtions, State, City, Location, propertyTypes, Facing, User, Role, propertyImage, Propertyfeature, Contactinquiry } = require("../../db");
+const { property, GALLERY, propertyperealtions, State, City, Location, propertyTypes, Facing, User, Role, propertyImage, Propertyfeature, Contactinquiry, Unit } = require("../../db");
 
 const { validatePropertyTypeAdd, validatePropertyTypeUpdate, validateTypeStatus } = require("./viewPropertyvalidator");
 
@@ -57,7 +57,8 @@ const GetProperty = controller.GetProperty({
   propertyperealtions,
   propertyTypes,
   Facing,
-  User, Contactinquiry
+  User, Contactinquiry,
+  Unit,
 
 });
 

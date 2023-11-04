@@ -287,8 +287,6 @@ const doGetCustomerRequirmentbyid = async ({ BadRequestError, Customer, Property
 // delete find by id 
 const doCheckPropertyByagent = async ({
   cus_id,
-
-
 }) => {
   const agent = await Property.findOne({
     where: {

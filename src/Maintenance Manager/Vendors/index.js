@@ -22,6 +22,7 @@ const {
   doUpdatevendor,
   doDeleteVendor,
   doStatus,
+  doCheckVendorforcategory
 
 } = require("./vendor.service");
 
@@ -43,6 +44,7 @@ const categoryAdd = controller.categoryAdd({
 const getCategory = controller.getCategory({
   BadRequestError,
   doGetCategory,
+  Vendor
 });
 
 
@@ -50,6 +52,7 @@ const getCategory = controller.getCategory({
 const Categorydelete = controller.Categorydelete({
   BadRequestError,
   doDeleteCategory,
+  doCheckVendorforcategory,
 });
 
 // Edit Vendor category
@@ -70,11 +73,13 @@ const VendorAdd = controller.VendorAdd({
 const getVendor = controller.getVendor({
   BadRequestError,
   doGetVendor,
+  Vendorcategory
 });
 // Searching Vendor
 const searchVendor = controller.searchVendor({
   BadRequestError,
   Vendor,
+  Vendorcategory,
   doSearchVendor,
 });
 

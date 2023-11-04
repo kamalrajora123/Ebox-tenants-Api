@@ -93,9 +93,9 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'cus_id',
     });
 
-    // property.hasMany(models.Propertyfeature, {
-    //   foreignKey: 'pro_id',
-    // });
+    property.hasMany(models.Unit, {
+      foreignKey: 'property_id',
+    });
     // property.hasMany(models.propertyImage, {
     //   foreignKey: 'pro_id',
     // });

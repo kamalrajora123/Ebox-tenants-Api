@@ -128,7 +128,8 @@ const GetProperty = ({
   Facing,
   User,
   Role,
-  Contactinquiry
+  Contactinquiry,
+  Unit
 }) => async (httpRequest) => {
   const data = await doGetProperty({
     // propertyperealtions,
@@ -141,7 +142,8 @@ const GetProperty = ({
     Facing,
     User,
     Role,
-    Contactinquiry
+    Contactinquiry,
+    Unit
   });
   return {
     statusCode: 200,

@@ -1,6 +1,6 @@
 
 const { url } = require('inspector');
-const { property, sequelize, GALLERY, propertydetails, Location, Propertyfeature, propertyTypes, propertyImage, Contactinquiry } = require('../../db');
+const { property, sequelize, GALLERY, propertydetails, Location, Propertyfeature, propertyTypes, propertyImage, Contactinquiry, Unit } = require('../../db');
 
 
 const { NotFoundError, BadRequestError } = require('../../utils/api-errors');
@@ -136,7 +136,8 @@ const doGetProperty = async ({
   Facing,
   User,
   Role,
-  Contactinquiry
+  Contactinquiry,
+  Unit
 }) => {
   const city = await property.findAll({
 
@@ -166,7 +167,7 @@ const doGetProperty = async ({
         include: [{
           model: Role,
         }]
-      },
+      }, { model: Unit },
     ],
 
 

@@ -29,11 +29,13 @@ const categoryAdd = ({
 const getCategory = ({
   BadRequestError,
   doGetCategory,
-  Category
+  Category,
+  Vendor
 }) => async (httpRequest) => {
   const data = await doGetCategory({
     BadRequestError,
-    Category
+    Category,
+    Vendor
   });
   return {
     statusCode: 200,
@@ -79,6 +81,37 @@ const updateCategory = ({
   };
 };
 
+//Delete Vendor Category  
+const Categorydelete = ({
+  BadRequestError,
+  doDeleteCategory,
+  doCheckVendorforcategory
+}) => async (httpRequest) => {
+  const { id } = httpRequest.params;
+
+  try {
+    await doCheckVendorforcategory({
+      cat_id: id,
+      BadRequestError,
+    });
+  }
+  catch (err) {
+
+    const data = await doDeleteCategory({
+      id,
+      BadRequestError
+    });
+    return {
+      statusCode: 200,
+      body: {
+        success: true,
+        message: 'Deleted vendor Category successfully!',
+        data,
+      },
+    };
+  };
+  throw new BadRequestError('The Category Cannot Be Deleted Because Vendors Are Assigned To This Category.');
+};
 
 //status data
 const status = ({
@@ -112,28 +145,6 @@ const status = ({
 
 
 
-//Delete Vendor Category  
-const Categorydelete = ({
-  BadRequestError,
-  doDeleteCategory
-}) => async (httpRequest) => {
-  const {
-    id,
-  } = httpRequest.params;
-
-  const data = await doDeleteCategory({
-    id,
-    BadRequestError
-  });
-  return {
-    statusCode: 200,
-    body: {
-      success: true,
-      message: 'Deleted vendor Category successfully!',
-      data,
-    },
-  };
-};
 
 
 //Add Vendor 
@@ -169,7 +180,15 @@ const VendorAdd = ({
     country_code,
     role_id,
     companyname,
-    expirationdate } = httpRequest.body
+    expirationdate,
+    alt_name,
+    alt_lname,
+    dif_add1,
+    dif_add2,
+    dif_city_id,
+    dif_state_id,
+    dif_zip,
+    dif_cntry_id, } = httpRequest.body
   const vendorResult = await doVendor({
     name,
     username,
@@ -195,6 +214,14 @@ const VendorAdd = ({
     role_id,
     companyname,
     expirationdate,
+    alt_name,
+    alt_lname,
+    dif_add1,
+    dif_add2,
+    dif_city_id,
+    dif_state_id,
+    dif_zip,
+    dif_cntry_id,
   });
   return {
     statusCode: 200,
@@ -212,11 +239,13 @@ const VendorAdd = ({
 const getVendor = ({
   BadRequestError,
   doGetVendor,
-  Vendor
+  Vendor,
+  Vendorcategory
 }) => async (httpRequest) => {
   const data = await doGetVendor({
     BadRequestError,
-    Vendor
+    Vendor,
+    Vendorcategory
   });
   return {
     statusCode: 200,
@@ -232,15 +261,19 @@ const getVendor = ({
 const searchVendor = ({
   doSearchVendor,
   Vendor,
+  Vendorcategory
 }) => async (httpRequest) => {
-  const { name, username, company_url, status } = httpRequest.body;
+  const { name, username, companyname, status, cat_id, mobile } = httpRequest.body;
   console.log("BODY DATA=>>>", httpRequest.body);
   const data = await doSearchVendor({
     name,
     username,
-    company_url,
+    companyname,
     status,
     Vendor,
+    Vendorcategory,
+    cat_id,
+    mobile
   });
   return {
     statusCode: 200,

@@ -11,5 +11,12 @@ module.exports = (sequelize, DataTypes) => {
 
         });
 
+    Vendorcategory.associate = function (models) {
+        Vendorcategory.hasMany(models.Vendor, {
+            foreignKey: 'cat_id',
+        });
+    }
+
+
     return Vendorcategory;
 };
