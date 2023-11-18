@@ -27,12 +27,12 @@ module.exports = (sequelize, DataTypes) => {
     alt_name: DataTypes.STRING,
     alt_lname: DataTypes.STRING,
     expirationdate: DataTypes.DATE,
-    dif_add1:DataTypes.STRING,
-    dif_add2:DataTypes.STRING,
-    dif_city_id:DataTypes.STRING,
-    dif_state_id:DataTypes.STRING,
-    dif_zip:DataTypes.STRING,
-    dif_cntry_id:DataTypes.INTEGER,
+    dif_add1: DataTypes.STRING,
+    dif_add2: DataTypes.STRING,
+    dif_city_id: DataTypes.STRING,
+    dif_state_id: DataTypes.STRING,
+    dif_zip: DataTypes.STRING,
+    country: DataTypes.INTEGER,
     status: {
       type: DataTypes.STRING,
       defaultValue: "Y",
@@ -46,6 +46,13 @@ module.exports = (sequelize, DataTypes) => {
   Vendor.associate = function (models) {
     Vendor.belongsTo(models.Vendorcategory, {
       foreignKey: 'cat_id',
+    });
+
+    Vendor.belongsTo(models.Accounts, {
+      foreignKey: 'account_id',
+    });
+    Vendor.belongsTo(models.State, {
+      foreignKey: 'state_id',
     });
   }
 

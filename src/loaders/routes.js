@@ -73,13 +73,15 @@ const { ContactinquiryRoutes, } = require("../contactInquiry")
 const {
   SubscriptionRoutes,
 } = require('../subscription');
-
-// Vendors
+// Maintenance
+//  Vendors
 const { VendorRoutes } = require('../Maintenance Manager/Vendors')
+const { WorkRoutes } = require('../Maintenance Manager/Work orders')
+const { CountryRoutes } = require('../Country Manager')
+const { TaskcategoryRoutes } = require('../Task Manager/Task category')
 
-
-
-
+// Accounts Routes
+const { AccountRoutes } = require('../Expense Account')
 
 
 
@@ -114,10 +116,15 @@ module.exports = function getRoutes(app) {
   app.use('/api/v1/advertisementpackage', Auth, AdvertisementPackage);
   app.use('/api/v1/advertisementsubscription', advertisementsubscription);
 
-
+  // Mainrenance
   // Vendor  routes
   app.use('/api/v1/maintenance', Auth, VendorRoutes);
+  app.use('/api/v1/maintenance/workorder', Auth, WorkRoutes);
+  app.use('/api/v1/country', Auth, CountryRoutes);
 
-
+  // Task manager routes
+  app.use('/api/v1/task/category', Auth, TaskcategoryRoutes);
+  // Account Routes
+  app.use('/api/v1/account', Auth, AccountRoutes);
 
 };

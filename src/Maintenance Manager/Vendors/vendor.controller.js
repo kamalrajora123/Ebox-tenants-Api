@@ -113,35 +113,7 @@ const Categorydelete = ({
   throw new BadRequestError('The Category Cannot Be Deleted Because Vendors Are Assigned To This Category.');
 };
 
-//status data
-const status = ({
-  doStatus,
-  Faq,
-  BadRequestError,
-  validateFaqStatus
-}) => async (httpRequest) => {
-  const { id } = httpRequest.params;
-  let { status } = httpRequest.body;
-  status = (status === "Y") ? "N" : "Y"
-  const {
-    error,
-  } = validateFaqStatus(httpRequest.body);
-  if (error) throw new BadRequestError(error.message);
-  const data = await doStatus({
-    id,
-    Faq,
-    BadRequestError,
-    status
-  });
-  return {
-    statusCode: 200,
-    body: {
-      success: true,
-      message: 'Status updated successfully!',
-      data,
-    },
-  };
-};
+
 
 
 
@@ -188,7 +160,7 @@ const VendorAdd = ({
     dif_city_id,
     dif_state_id,
     dif_zip,
-    dif_cntry_id, } = httpRequest.body
+    country } = httpRequest.body
   const vendorResult = await doVendor({
     name,
     username,
@@ -221,7 +193,7 @@ const VendorAdd = ({
     dif_city_id,
     dif_state_id,
     dif_zip,
-    dif_cntry_id,
+    country
   });
   return {
     statusCode: 200,
@@ -240,11 +212,15 @@ const getVendor = ({
   BadRequestError,
   doGetVendor,
   Vendor,
-  Vendorcategory
+  Vendorcategory,
+  Accounts,
+  State
 }) => async (httpRequest) => {
   const data = await doGetVendor({
     BadRequestError,
     Vendor,
+    Accounts,
+    State,
     Vendorcategory
   });
   return {
@@ -339,7 +315,35 @@ const Vendordelete = ({
   };
 };
 
-
+//status data
+const status = ({
+  doStatus,
+  Vendor,
+  BadRequestError,
+  validateVendorStatus
+}) => async (httpRequest) => {
+  const { id } = httpRequest.params;
+  let { status } = httpRequest.body;
+  status = (status === "Y") ? "N" : "Y"
+  const {
+    error,
+  } = validateVendorStatus(httpRequest.body);
+  if (error) throw new BadRequestError(error.message);
+  const data = await doStatus({
+    id,
+    Vendor,
+    BadRequestError,
+    status
+  });
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      message: 'Status updated successfully!',
+      data,
+    },
+  };
+};
 
 
 

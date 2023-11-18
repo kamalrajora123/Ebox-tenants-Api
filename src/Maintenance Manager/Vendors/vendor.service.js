@@ -64,22 +64,7 @@ const doUpdateCategory = async ({
 
 
 
-//status data in faq
-const doStatus = async ({
-  id,
-  BadRequestError,
-  status
-}) => {
-  const data = await Faq.update({ status },
-    {
-      where: {
-        id: id,
-      },
-    },
-  );
-  if (data[0] == 0) throw new BadRequestError("Id Not Match");
-  return data[0];
-};
+
 
 //delete vendor category
 const doDeleteCategory = async ({
@@ -145,7 +130,7 @@ const doVendor = async ({ name,
   dif_city_id,
   dif_state_id,
   dif_zip,
-  dif_cntry_id,
+  country
 }) => {
 
   const existingVendor = await Vendor.findOne({ where: { [Op.or]: [{ username }, { mobile }] } });
@@ -184,7 +169,7 @@ const doVendor = async ({ name,
     dif_city_id,
     dif_state_id,
     dif_zip,
-    dif_cntry_id,
+    country
 
   });
 
@@ -196,13 +181,15 @@ const doVendor = async ({ name,
 
 //view Vendor
 const doGetVendor = async ({
-  Vendorcategory
+  Vendorcategory,
+  Accounts,
+  State
 }) => {
   const vendoress = await Vendor.findAll(
     {
       where: { role_id: 5 },
       order: [["createdAt", "DESC"]],
-      include: { model: Vendorcategory }
+      include: [{ model: Vendorcategory }, { model: Accounts }, { model: State }]
     }
   );
   return vendoress
@@ -301,7 +288,22 @@ const doDeleteVendor = async ({
 };
 
 
-
+//status updated Vendor
+const doStatus = async ({
+  id,
+  BadRequestError,
+  status
+}) => {
+  const data = await Vendor.update({ status },
+    {
+      where: {
+        id: id,
+      },
+    },
+  );
+  if (data[0] == 0) throw new BadRequestError("Id Not Match");
+  return data[0];
+};
 
 
 

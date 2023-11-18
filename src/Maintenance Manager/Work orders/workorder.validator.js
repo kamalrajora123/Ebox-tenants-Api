@@ -20,9 +20,7 @@ const validateUpdateCategory = (data) => {
   });
   return schema.validate(data, options);
 };
-
-
-const validateVendorStatus = (data) => {
+const validateFaqStatus = (data) => {
   const schema = Joi.object({
     status: Joi.string().required(),
   });
@@ -33,5 +31,5 @@ const validateVendorStatus = (data) => {
 module.exports = {
   validateAddCategory,
   validateUpdateCategory,
-  validateVendorStatus
+  validateFaqStatus
 };

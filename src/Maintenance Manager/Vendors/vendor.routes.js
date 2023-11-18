@@ -13,6 +13,8 @@ module.exports = ({
   router.post('/vendor/search', makeExpressCallback(VendorController.searchVendor));
   router.put('/vendor/:id', makeExpressCallback(VendorController.updateVendor));
   router.delete('/vendor/delete/:id', makeExpressCallback(VendorController.Vendordelete));
+  router.put('/vendor/status/:id', makeExpressCallback(VendorController.status));
+
 
 
 

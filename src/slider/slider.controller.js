@@ -15,18 +15,18 @@ const SliderAdd = ({
   // } = validateAddSlider(httpRequest.body);
   // imageUpload(httpRequest);
   // if (error) throw new BadRequestError(error.message);
-    const Result = await doAddSlider({ 
-      title,
-      filename
-    });
-    return {
-      statusCode: 200,
-      body: {  
-        success: true,
-        message: 'Slider added successfully!',
-        data: Result,
-      },
-    };
+  const Result = await doAddSlider({
+    title,
+    filename
+  });
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      message: 'Slider added successfully!',
+      data: Result,
+    },
+  };
 };
 
 
@@ -60,8 +60,8 @@ const updateSlider = ({
   validateUpdateSlider
 }) => async (httpRequest) => {
   const { id } = httpRequest.params;
-  const  sliderdata  = httpRequest.body;
-  const {filename} = httpRequest.file;
+  const sliderdata = httpRequest.body;
+  const { filename } = httpRequest.file;
   const data = await doUpdateSlider({
     id,
     Slider,
@@ -78,7 +78,7 @@ const updateSlider = ({
     },
   };
 };
- 
+
 
 //Status
 
@@ -89,8 +89,8 @@ const StatusSlider = ({
   validateStatusSlider
 }) => async (httpRequest) => {
   const { id } = httpRequest.params;
-  let  {status}  = httpRequest.body;
-  status=(status==="Y")?"N":"Y"
+  let { status } = httpRequest.body;
+  status = (status === "Y") ? "N" : "Y"
   const { error } = validateStatusSlider(httpRequest.body);
   if (error) throw new BadRequestError(error.message);
   const data = await doStatusSlider({
@@ -110,25 +110,25 @@ const StatusSlider = ({
 };
 
 //Edit Slider
-  const EditSlider = ({
-    doEditSlider,
+const EditSlider = ({
+  doEditSlider,
+  Slider
+}) => async (httpRequest) => {
+  const { id } = httpRequest.params;
+  const data = await doEditSlider({
+    id,
     Slider
-  }) => async (httpRequest) => {
-    const { id } = httpRequest.params;
-    const data = await doEditSlider({
-      id,
-      Slider
-    });
-    console.log("data==>>",data);
-    return {
-      statusCode: 200,
-      body: {
-        success: true,
-        message: 'Slider fetch successfully!',
-        data,
-      },
-    };
+  });
+  console.log("data==>>", data);
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      message: 'Slider fetch successfully!',
+      data,
+    },
   };
+};
 
 
 //Delete Slider 
@@ -136,12 +136,12 @@ const StatusSlider = ({
 const Sliderdelete = ({
   BadRequestError,
   doDeleteSlider
-  
+
 }) => async (httpRequest) => {
   const {
     id,
   } = httpRequest.params;
- 
+
   const data = await doDeleteSlider({
     id,
     BadRequestError

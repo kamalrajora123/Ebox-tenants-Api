@@ -7,9 +7,9 @@ const router = require("express").Router();
 //   INVITATION_TOKEN_EXPIRES_IN,
 // } = require("config");
 
-const { Faq, FaqCatgory, Vendorcategory, Vendor } = require("../../db");
+const { Faq, FaqCatgory, Vendorcategory, Vendor, Accounts, State } = require("../../db");
 
-const { validateAddCategory, validateUpdateCategory, validateFaqStatus } = require("./vendor.validator");
+const { validateAddCategory, validateUpdateCategory, validateVendorStatus } = require("./vendor.validator");
 
 const {
   doCategory,
@@ -73,6 +73,8 @@ const VendorAdd = controller.VendorAdd({
 const getVendor = controller.getVendor({
   BadRequestError,
   doGetVendor,
+  Accounts,
+  State,
   Vendorcategory
 });
 // Searching Vendor
@@ -99,12 +101,12 @@ const Vendordelete = controller.Vendordelete({
 
 
 
-
+// status 
 const status = controller.status({
   BadRequestError,
   doStatus,
-  Faq,
-  validateFaqStatus
+  validateVendorStatus,
+  Vendor,
 });
 
 const VendorController = {
