@@ -215,7 +215,6 @@ const doSearchCustomer = async ({
 
 // customer detailby id
 const doGetCustomerdetailbyid = async ({ BadRequestError, Customer,
-
   id
 }) => {
   const customer = await Customer.findOne(

@@ -1,10 +1,10 @@
 {
   "development": {
-    "username": "nodeserver",
-    "password": "nodeserver@123~",
+    "username": "root",
+    "password": null,
     "database": "eboxtenants",
     "fileSize": 52428800,
-    "host": "15.206.134.46",
+    "host": "localhost",
     "port": 3306,
     "dialect": "mysql"
   },

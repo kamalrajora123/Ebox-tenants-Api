@@ -7,9 +7,13 @@ const router = require("express").Router();
 //   INVITATION_TOKEN_EXPIRES_IN,
 // } = require("config");
 
-const { Faq, FaqCatgory, Vendorcategory, Vendor, Accounts, State } = require("../../db");
+const { Faq, FaqCatgory, Vendorcategory, Vendor, Accounts, State, Vendorfile, Vendorfilecategory } = require("../../db");
 
 const { validateAddCategory, validateUpdateCategory, validateVendorStatus } = require("./vendor.validator");
+const { imageUpload } = require("../../middlewares/fileUpload");
+
+
+
 
 const {
   doCategory,
@@ -22,7 +26,15 @@ const {
   doUpdatevendor,
   doDeleteVendor,
   doStatus,
-  doCheckVendorforcategory
+  doCheckVendorforcategory,
+  doGetDetail,
+  doVendorFile,
+  doFilecategory,
+  doGetFilecategory,
+  doUpdateFileCategory,
+  doDeleteFilecategory,
+  doCheckVendorforfilecategory,
+  doDeleteVendorFiles
 
 } = require("./vendor.service");
 
@@ -75,7 +87,7 @@ const getVendor = controller.getVendor({
   doGetVendor,
   Accounts,
   State,
-  Vendorcategory
+  Vendorcategory,
 });
 // Searching Vendor
 const searchVendor = controller.searchVendor({
@@ -99,8 +111,6 @@ const Vendordelete = controller.Vendordelete({
   doDeleteVendor,
 });
 
-
-
 // status 
 const status = controller.status({
   BadRequestError,
@@ -108,6 +118,57 @@ const status = controller.status({
   validateVendorStatus,
   Vendor,
 });
+
+// View All details Vendor
+const getDetail = controller.getDetail({
+  BadRequestError,
+  doGetDetail,
+  Accounts,
+  Vendorfile
+});
+
+// View All details Vendor
+const vendorFile = controller.vendorFile({
+  BadRequestError,
+  doVendorFile,
+  imageUpload
+
+});
+// Add vendor file category
+const filecategoryAdd = controller.filecategoryAdd({
+  BadRequestError,
+  doFilecategory,
+
+});
+
+// View Vendor file category
+const getFilecategory = controller.getFilecategory({
+  BadRequestError,
+  Vendorfile,
+  doGetFilecategory
+});
+
+// Delete Vendor category
+const Filecategorydelete = controller.Filecategorydelete({
+  BadRequestError,
+  doDeleteFilecategory,
+  doCheckVendorforfilecategory,
+});
+
+// Edit Vendor category
+const updateFilecategory = controller.updateFilecategory({
+  BadRequestError,
+  doUpdateFileCategory,
+  Vendorfilecategory,
+});
+// Vendor file deleted
+const Vendorfiledelete = controller.Vendorfiledelete({
+  BadRequestError,
+  doDeleteVendorFiles,
+});
+
+
+
 
 const VendorController = {
   categoryAdd,
@@ -120,6 +181,13 @@ const VendorController = {
   updateVendor,
   Vendordelete,
   status,
+  getDetail,
+  vendorFile,
+  filecategoryAdd,
+  getFilecategory,
+  updateFilecategory,
+  Filecategorydelete,
+  Vendorfiledelete
 
 };
 
@@ -143,6 +211,14 @@ module.exports = {
     doUpdatevendor,
     doSearchVendor,
     doDeleteVendor,
+    doGetDetail,
+    doVendorFile,
+    doFilecategory,
+    doGetFilecategory,
+    doUpdateFileCategory,
+    doDeleteFilecategory,
+    doDeleteVendorFiles
+
   },
   VendorRoutes: routes,
 };

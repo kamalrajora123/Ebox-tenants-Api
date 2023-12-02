@@ -18,9 +18,9 @@ module.exports.imageUpload = multer({
     fieldSize: 5248000,
   },
   fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+    if (!file.originalname.match(/\.(png|jpg|jpeg|pdf|xlsx|xls|csv)$/)) {
       // upload only png and jpg format
-      return cb(new Error("Please upload a Valid Image"));
+      return cb(new Error("Please upload a Valid Image, PDF, or Excel file"));
     }
     cb(undefined, true);
   },

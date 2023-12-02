@@ -116,9 +116,6 @@ const Categorydelete = ({
 
 
 
-
-
-
 //Add Vendor 
 const VendorAdd = ({
   BadRequestError,
@@ -193,7 +190,7 @@ const VendorAdd = ({
     dif_city_id,
     dif_state_id,
     dif_zip,
-    country
+    country,
   });
   return {
     statusCode: 200,
@@ -239,7 +236,7 @@ const searchVendor = ({
   Vendor,
   Vendorcategory
 }) => async (httpRequest) => {
-  const { name, username, companyname, status, cat_id, mobile } = httpRequest.body;
+  const { name, username, companyname, status, cat_id, mobile, StatrtDate, EndDate } = httpRequest.body;
   console.log("BODY DATA=>>>", httpRequest.body);
   const data = await doSearchVendor({
     name,
@@ -249,7 +246,7 @@ const searchVendor = ({
     Vendor,
     Vendorcategory,
     cat_id,
-    mobile
+    mobile, StatrtDate, EndDate
   });
   return {
     statusCode: 200,
@@ -345,6 +342,227 @@ const status = ({
   };
 };
 
+// View All details for Vendor
+const getDetail = ({
+  BadRequestError,
+  doGetDetail,
+  Vendor,
+  Accounts,
+  Vendorfile
+}) => async (httpRequest) => {
+  const { id } = httpRequest.params;
+  const data = await doGetDetail({
+    BadRequestError,
+    Vendor,
+    id,
+    Accounts,
+    Vendorfile
+
+  });
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      message: 'View All Detail For Vendor!',
+      data,
+    },
+  };
+};
+
+
+// Vendor files
+// const vendorFile = ({
+//   BadRequestError,
+//   doVendorFile,
+// }) => async (httpRequest) => {
+//   const {
+//     vendor_id
+//   } = httpRequest.body;
+//   const {
+//     filename
+//   } = httpRequest.file;
+
+//   const Result = await doVendorFile({
+//     vendor_id,
+//     filename
+//   });
+//   return {
+//     statusCode: 200,
+//     body: {
+//       success: true,
+//       message: 'Vendor file Added  Successfully!',
+//       data: Result,
+//     },
+//   };
+// };
+
+const vendorFile = ({
+  BadRequestError,
+  doVendorFile,
+}) => async (httpRequest) => {
+  const {
+    vendor_id
+  } = httpRequest.body;
+  // const {filename} = httpRequest.file;
+  const filename = httpRequest.files.map(file => file.filename);
+  console.log("filename", filename)
+  const Result = await doVendorFile({
+    vendor_id,
+    filename
+  });
+
+  console.log("Result", Result)
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      message: 'Vendor file Added  Successfully!',
+      data: Result,
+    },
+  };
+};
+
+// Vendor file deleted
+const Vendorfiledelete = ({
+  BadRequestError,
+  doDeleteVendorFiles
+}) => async (httpRequest) => {
+  const {
+    id,
+  } = httpRequest.params;
+
+  const data = await doDeleteVendorFiles({
+    id,
+    BadRequestError
+  });
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      message: 'Deleted  Vendor file successfully!',
+      data,
+    },
+  };
+};
+
+
+
+
+
+
+// Vendor files categorys Add    
+const filecategoryAdd = ({
+  BadRequestError,
+  doFilecategory,
+  validateAddCategory
+}) => async (httpRequest) => {
+  // const {
+  //   error,
+  // } = validateAddCategory(httpRequest.body);
+  // if (error) throw new BadRequestError(error.message);
+  const { name } = httpRequest.body
+  const categoryResult = await doFilecategory({
+    name,
+  });
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      message: 'Vendor File Category  Added successfully!',
+      data: categoryResult,
+    },
+  };
+};
+
+// View vendor file category
+const getFilecategory = ({
+  BadRequestError,
+  doGetFilecategory,
+  Vendorfile
+}) => async (httpRequest) => {
+  const data = await doGetFilecategory({
+    BadRequestError,
+    Vendorfile
+  });
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      message: 'Fetched Vendor File Category successfully!',
+      data,
+    },
+  };
+};
+
+
+
+// Edit Vendor file Category
+const updateFilecategory = ({
+  doUpdateFileCategory,
+  Vendorfilecategory,
+  BadRequestError,
+}) => async (httpRequest) => {
+  const { id } = httpRequest.params;
+  const categorydata = httpRequest.body;
+  // const {
+  //   error,
+  // } = validateUpdateCategory(httpRequest.body);
+  // if (error) throw new BadRequestError(error.message);
+  const data = await doUpdateFileCategory({
+    id,
+    Vendorfilecategory,
+    BadRequestError,
+    categorydata
+  });
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      message: ' Vendor File Category Updated Successfully!',
+      data,
+    },
+  };
+};
+
+//Delete Vendor file Category  
+const Filecategorydelete = ({
+  BadRequestError,
+  doDeleteFilecategory,
+  doCheckVendorforfilecategory
+}) => async (httpRequest) => {
+  const { id } = httpRequest.params;
+
+  try {
+    await doCheckVendorforfilecategory({
+      cat_id: id,
+      BadRequestError,
+    });
+  }
+  catch (err) {
+
+    const data = await doDeleteFilecategory({
+      id,
+      BadRequestError
+    });
+    return {
+      statusCode: 200,
+      body: {
+        success: true,
+        message: 'Deleted vendor file Category successfully!',
+        data,
+      },
+    };
+  };
+  throw new BadRequestError('The File Category Cannot Be Deleted Because File Are Assigned To This Category.');
+};
+
+
+
+
+
+
+
+
 
 
 module.exports = {
@@ -358,4 +576,11 @@ module.exports = {
   updateVendor,
   Vendordelete,
   status,
+  getDetail,
+  vendorFile,
+  filecategoryAdd,
+  getFilecategory,
+  updateFilecategory,
+  Filecategorydelete,
+  Vendorfiledelete
 };

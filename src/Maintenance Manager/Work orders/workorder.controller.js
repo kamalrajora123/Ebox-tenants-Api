@@ -37,6 +37,7 @@ const status = ({
 const WorkAdd = ({
   BadRequestError,
   doWork,
+  doPartslabor
 }) => async (httpRequest) => {
   const { name,
     pro_id,
@@ -54,7 +55,13 @@ const WorkAdd = ({
     assignedto,
     collab,
     duedate,
-    amount } = httpRequest.body
+    qty,
+    account_id,
+    description,
+    price,
+    tot_price,
+  } = httpRequest.body
+  console.log("httpRequest.body", httpRequest.body)
   // const { filename } = httpRequest.file;
   var filename
   if (httpRequest.file) {
@@ -78,9 +85,21 @@ const WorkAdd = ({
     assignedto,
     collab,
     duedate,
-    amount,
+
     filename
   });
+
+  console.log("workResult", workResult.id)
+
+  const Partlaborss = await doPartslabor({
+    workorder_id: workResult.id,
+    qty,
+    account_id,
+    description,
+    price,
+    tot_price
+  });
+
   return {
     statusCode: 200,
     body: {
@@ -102,7 +121,8 @@ const getWork = ({
   property,
   Unit,
   Vendor,
-  TaskCategory
+  TaskCategory,
+  Partslabour
 }) => async (httpRequest) => {
   const data = await doGetWork({
     BadRequestError,
@@ -111,7 +131,10 @@ const getWork = ({
     property,
     Unit,
     Vendor,
-    TaskCategory
+    TaskCategory,
+    Partslabour
+
+
   });
   return {
     statusCode: 200,
@@ -132,7 +155,7 @@ const searchWork = ({
   Vendor,
   TaskCategory
 }) => async (httpRequest) => {
-  const { pro_id, priority, assignedto, status, vendor_id } = httpRequest.body;
+  const { pro_id, priority, assignedto, status, vendor_id, StatrtDate, EndDate } = httpRequest.body;
   console.log("BODY DATA=>>>", httpRequest.body);
   const data = await doSearchWork({
     property,
@@ -143,6 +166,8 @@ const searchWork = ({
     assignedto,
     status,
     vendor_id,
+    StatrtDate,
+    EndDate,
     WorkOrder,
     TaskCategory
 
@@ -151,7 +176,7 @@ const searchWork = ({
     statusCode: 200,
     body: {
       success: true,
-      message: 'Vendor Search successfully!',
+      message: 'Work order  Search successfully!',
       data,
     },
   };
@@ -163,10 +188,10 @@ const updateWork = ({
   doUpdateWork,
   WorkOrder,
   BadRequestError,
+  doUpdatePartslabor
 }) => async (httpRequest) => {
   const { id } = httpRequest.params;
   const workdata = httpRequest.body;
-
   // const { filename } = httpRequest.file;
   var filename
   if (httpRequest.file) {
@@ -179,6 +204,20 @@ const updateWork = ({
     workdata,
     filename
   });
+
+  console.log("Workdata", workdata)
+  const updatepartslabor = await doUpdatePartslabor({
+    workorder_id: id,
+    qty: workdata.qty,
+    account_id: workdata.account_id,
+    description: workdata.description,
+    price: workdata.price,
+    tot_price: workdata.description
+  });
+
+
+
+
   return {
     statusCode: 200,
     body: {
@@ -214,6 +253,37 @@ const Workdelete = ({
 };
 
 
+// View All details for work order 
+const getDetail = ({
+  BadRequestError,
+  doGetDetail,
+  WorkOrder,
+  Partslabour,
+  Accounts,
+  Vendor,
+  property,
+  Unit
+}) => async (httpRequest) => {
+  const { id } = httpRequest.params;
+  const data = await doGetDetail({
+    BadRequestError,
+    WorkOrder,
+    Partslabour,
+    id,
+    Accounts,
+    Vendor,
+    property,
+    Unit
+  });
+  return {
+    statusCode: 200,
+    body: {
+      success: true,
+      message: 'View All Detail For Work Order!',
+      data,
+    },
+  };
+};
 
 
 
@@ -224,4 +294,5 @@ module.exports = {
   updateWork,
   Workdelete,
   status,
+  getDetail
 };

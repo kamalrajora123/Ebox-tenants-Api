@@ -17,8 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     assignedto: DataTypes.STRING,
     collab: DataTypes.STRING,
     duedate: DataTypes.DATE,
-    amount: DataTypes.STRING,
-    description: DataTypes.STRING,
+
     // status: {
     //   type: DataTypes.STRING,
     //   defaultValue: "Y",
@@ -45,6 +44,11 @@ module.exports = (sequelize, DataTypes) => {
     WorkOrder.belongsTo(models.TaskCategory, {
       foreignKey: 'task_cat_id',
     });
+    // parts of labour
+    WorkOrder.hasMany(models.Partslabour, {
+      foreignKey: 'workorder_id',
+    });
+
   }
 
   return WorkOrder;

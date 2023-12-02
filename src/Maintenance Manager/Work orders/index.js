@@ -7,9 +7,9 @@ const router = require("express").Router();
 //   INVITATION_TOKEN_EXPIRES_IN,
 // } = require("config");
 
-const { Faq, FaqCatgory, property, Unit, Vendor, WorkOrder, TaskCategory } = require("../../db");
+const { Faq, FaqCatgory, property, Unit, Vendor, WorkOrder, TaskCategory, Partslabour, Accounts } = require("../../db");
 
-const { validateAddCategory, validateUpdateCategory, validateFaqStatus } = require("./workorder.validator");
+const { validateAddCategory, validateUpdateCategory, validateFaqStatus, } = require("./workorder.validator");
 const { imageUpload } = require("../../middlewares/fileUpload");
 
 
@@ -20,6 +20,9 @@ const {
   doUpdateWork,
   doDeleteWork,
   doStatus,
+  doPartslabor,
+  doUpdatePartslabor,
+  doGetDetail
 } = require("./workorder.service");
 
 const makeExpressCallback = require("../../utils/express-callback");
@@ -33,7 +36,8 @@ const controller = require("./workorder.controller");
 const WorkAdd = controller.WorkAdd({
   BadRequestError,
   doWork,
-  imageUpload
+  imageUpload,
+  doPartslabor
   // validateAddCategory,
 });
 // View Work order
@@ -43,7 +47,9 @@ const getWork = controller.getWork({
   property,
   Unit,
   Vendor,
-  TaskCategory
+  TaskCategory,
+  Partslabour
+
 });
 
 
@@ -63,7 +69,8 @@ const updateWork = controller.updateWork({
   BadRequestError,
   doUpdateWork,
   WorkOrder,
-  imageUpload
+  imageUpload,
+  doUpdatePartslabor
   // validateUpdateVendor
 });
 
@@ -73,7 +80,17 @@ const Workdelete = controller.Workdelete({
   doDeleteWork,
 });
 
-
+// All details for work order 
+const getDetail = controller.getDetail({
+  BadRequestError,
+  doGetDetail,
+  WorkOrder,
+  Partslabour,
+  Accounts,
+  Vendor,
+  property,
+  Unit
+});
 
 
 const status = controller.status({
@@ -90,6 +107,7 @@ const WorkController = {
   updateWork,
   Workdelete,
   status,
+  getDetail
 
 };
 
@@ -109,6 +127,7 @@ module.exports = {
     doUpdateWork,
     doSearchWork,
     doDeleteWork,
+    doGetDetail
   },
   WorkRoutes: routes,
 };

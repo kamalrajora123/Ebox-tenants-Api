@@ -1,5 +1,5 @@
 
-const { sequelize, property, Unit, WorkOrder } = require('../../db');
+const { sequelize, property, Unit, WorkOrder, Partslabour } = require('../../db');
 const { NotFoundError, BadRequestError } = require('../../utils/api-errors');
 
 
@@ -64,10 +64,57 @@ const doWork = async ({
     duedate,
     amount
   });
-  return {
-    workId: work.id
-  };
+
+  console.log("work", work.dataValues.id);
+  return work
+  // return {
+  //   workId: work.id
+  // };
 };
+
+const doPartslabor = async ({
+  workorder_id,
+  qty,
+  account_id,
+  description,
+  price,
+  tot_price
+}) => {
+  const arrcheck_list = qty.split(",");
+  const arraccount_list = account_id.split(",");
+  const arrdescription_list = description.split(",");
+  const arrprice_list = price.split(",");
+  const arrtotal_list = tot_price.split(",");
+
+  const maxLength = Math.max(
+    arrcheck_list.length,
+    arraccount_list.length,
+    arrdescription_list.length,
+    arrprice_list.length,
+    arrtotal_list.length
+  );
+
+  for (let i = 0; i < maxLength; i++) {
+    const checkdata = arrcheck_list[i] || '';
+    const accountdata = arraccount_list[i] || '';
+    const descriptiondata = arrdescription_list[i] || '';
+    const pricetdata = arrprice_list[i] || '';
+    const totaldata = arrtotal_list[i] || '';
+
+    await Partslabour.create({
+      workorder_id: workorder_id,
+      qty: checkdata,
+      account_id: accountdata,
+      description: descriptiondata,
+      price: pricetdata,
+      tot_price: totaldata,
+    });
+  }
+
+  return true;
+};
+
+
 
 
 //view Work Order
@@ -75,13 +122,15 @@ const doGetWork = async ({
   property,
   Unit,
   Vendor,
-  TaskCategory
+  TaskCategory,
+  Partslabour,
+
+
 }) => {
   const workerss = await WorkOrder.findAll(
     {
-
       order: [["createdAt", "DESC"]],
-      include: [{ model: property }, { model: Unit }, { model: Vendor }, { model: TaskCategory }]
+      include: [{ model: property }, { model: Unit }, { model: Vendor }, { model: TaskCategory }, { model: Partslabour }]
     }
   );
   return workerss
@@ -91,6 +140,8 @@ const doGetWork = async ({
 // Search Vendor
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
+const moment = require('moment');
+
 const doSearchWork = async ({
   pro_id,
   priority,
@@ -98,6 +149,8 @@ const doSearchWork = async ({
   status,
   vendor_id,
   WorkOrder,
+  StatrtDate,
+  EndDate,
   BadRequestError,
   property,
   Unit,
@@ -119,6 +172,29 @@ const doSearchWork = async ({
   if (status) {
     newobject.status = status
   }
+  // console.log("StatrtDate@@@@", StatrtDate)
+  if (StatrtDate) {
+    const startDate = moment(StatrtDate).startOf('day').toDate();
+    newobject.createdAt = {
+      [Op.gte]: startDate,
+    };
+  }
+  if (EndDate) {
+    // Create a start date for the selected date
+    const endDate = moment(EndDate).endOf('day').toDate();
+    // Use the start date in the Sequelize query
+    newobject.createdAt = {
+      [Op.lte]: endDate,
+    };
+  }
+
+
+
+
+
+
+
+
   console.log("newobject", newobject);
   const data = await WorkOrder.findAll({
     where: newobject,
@@ -159,6 +235,52 @@ const doUpdateWork = async ({
   return data[0];
 };
 
+// Update parts labour
+const doUpdatePartslabor = async ({
+  workorder_id,
+  qty, account_id, description, price, tot_price
+}) => {
+  const users = await Partslabour.destroy({
+    where: {
+      workorder_id: workorder_id,
+    },
+  });
+  console.log("users", users)
+  const arrcheck_list = qty.split(",");
+  const arraccount_list = account_id.split(",");
+  const arrdescription_list = description.split(",");
+  const arrprice_list = price.split(",");
+  const arrtotal_list = tot_price.split(",");
+
+  const maxLength = Math.max(
+    arrcheck_list.length,
+    arraccount_list.length,
+    arrdescription_list.length,
+    arrprice_list.length,
+    arrtotal_list.length
+  );
+
+  for (let i = 0; i < maxLength; i++) {
+    const checkdata = arrcheck_list[i] || '';
+    const accountdata = arraccount_list[i] || '';
+    const descriptiondata = arrdescription_list[i] || '';
+    const pricetdata = arrprice_list[i] || '';
+    const totaldata = arrtotal_list[i] || '';
+
+    const Arry = await Partslabour.create({
+      workorder_id: workorder_id,
+      qty: checkdata,
+      account_id: accountdata,
+      description: descriptiondata,
+      price: pricetdata,
+      tot_price: totaldata,
+    });
+    console.log("Arry", Arry)
+  }
+
+  return true;
+};
+
 
 
 //delete Work order 
@@ -175,7 +297,18 @@ const doDeleteWork = async ({
 };
 
 
-
+// All detail for work order
+const doGetDetail = async ({ BadRequestError, Partslabour, Accounts, Vendor, property, Unit,
+  id
+}) => {
+  const orderss = await WorkOrder.findOne(
+    {
+      include: [{ model: Partslabour, include: { model: Accounts } }, { model: Vendor }, { model: property }, { model: Unit }],
+      where: { id: id },
+    }
+  );
+  return orderss
+};
 
 
 
@@ -191,5 +324,8 @@ module.exports = {
   doUpdateWork,
   doDeleteWork,
   doStatus,
+  doPartslabor,
+  doGetDetail,
+  doUpdatePartslabor
 };
 

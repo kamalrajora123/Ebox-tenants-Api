@@ -1,5 +1,5 @@
 
-const { sequelize, Vendorcategory, Vendor } = require('../../db');
+const { sequelize, Vendorcategory, Vendor, Vendorfile, Vendorfilecategory } = require('../../db');
 const { NotFoundError, BadRequestError } = require('../../utils/api-errors');
 
 //Add Vendor Category
@@ -179,6 +179,7 @@ const doVendor = async ({ name,
 };
 
 
+
 //view Vendor
 const doGetVendor = async ({
   Vendorcategory,
@@ -199,6 +200,8 @@ const doGetVendor = async ({
 // Search Vendor
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
+const moment = require('moment');
+
 const doSearchVendor = async ({
   name,
   username,
@@ -207,6 +210,8 @@ const doSearchVendor = async ({
   cat_id,
   mobile,
   Vendor,
+  StatrtDate,
+  EndDate,
   Vendorcategory,
   BadRequestError,
 }) => {
@@ -227,6 +232,26 @@ const doSearchVendor = async ({
   if (status) {
     newobject.status = status
   }
+
+  if (StatrtDate) {
+    const startDate = moment(StatrtDate).startOf('day').toDate();
+    newobject.createdAt = {
+      [Op.gte]: startDate,
+    };
+  }
+  if (EndDate) {
+    // Create a start date for the selected date
+    const endDate = moment(EndDate).endOf('day').toDate();
+    // Use the start date in the Sequelize query
+    newobject.createdAt = {
+      [Op.lte]: endDate,
+    };
+  }
+
+
+
+
+
   newobject.role_id = 5;
   console.log("newobject", newobject);
   const data = await Vendor.findAll({
@@ -274,6 +299,9 @@ const doUpdatevendor = async ({
 
 
 
+
+
+
 //delete vendor 
 const doDeleteVendor = async ({
   id
@@ -306,6 +334,173 @@ const doStatus = async ({
 };
 
 
+// All detail for Vendor
+const doGetDetail = async ({ BadRequestError, Accounts, Vendorfile,
+  id
+}) => {
+  const Detaill = await Vendor.findOne(
+    {
+      include: [{ model: Accounts }, { model: Vendorfile }],
+      where: { id: id },
+    }
+  );
+  return Detaill
+};
+
+
+// Vendor Files Add
+// const doVendorFile = async ({ vendor_id, filename }) => {
+//   var image = filename;
+//   const vendorfiless = await Vendorfile.create({
+//     image,
+//     vendor_id,
+//   });
+//   return {
+//     VendorFileId: vendorfiless.id,
+//   };
+// };
+const doVendorFile = async ({ filename, vendor_id,
+}) => {
+
+  const insertedDetails = [];
+
+  for (const filenames of filename) {
+    const detail = await Vendorfile.create({
+      image: filenames,
+      vendor_id
+    });
+    insertedDetails.push(detail);
+    console.log("hyyyyy kamal", detail)
+  }
+
+  return insertedDetails;
+};
+
+
+
+
+
+// Vendor File deleted
+const doDeleteVendorFiles = async ({
+  id
+}) => {
+  const data = await Vendorfile.destroy({
+    where: {
+      id: id,
+    },
+  })
+  if (data == 0) throw new BadRequestError("Id Not Match");
+  return data[0];
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Vendor file category add
+const doFilecategory = async ({ name }) => {
+  const existingCategory = await Vendorfilecategory.findOne({ where: { name } });
+  if (existingCategory) {
+    throw new BadRequestError("There Is Already A Category. There Cannot Be Duplicate Categories.");
+  }
+  const categoryfile = await Vendorfilecategory.create({
+    name,
+  });
+  return {
+    categoryfileId: categoryfile.id
+  };
+};
+
+
+
+// Find Vendor file category
+const doGetFilecategory = async ({
+  BadRequestError,
+  Vendorfile
+}) => {
+  const filecategories = await Vendorfilecategory.findAll(
+    {
+      include: { model: Vendorfile },
+      order: [["createdAt", "DESC"]],
+    }
+  );
+  return filecategories
+};
+
+
+
+//Edit vendor categoryes
+const doUpdateFileCategory = async ({
+  id,
+  BadRequestError,
+  categorydata,
+}) => {
+  const { name } = categorydata;
+
+  const existingCategory = await Vendorfilecategory.findOne({
+    where: {
+      name: name,
+      id: { [Op.ne]: id } // exclude the current 
+    }
+  });
+  if (existingCategory) {
+    throw new BadRequestError(" Category With The Same Name Already Exists");
+  }
+
+  const data = await Vendorfilecategory.update(categorydata,
+    {
+      where: {
+        id: id,
+      },
+    },
+
+  );
+  if (data[0] == 0) throw new BadRequestError("Id Not Match");
+  return data[0];
+};
+
+
+
+
+
+
+//delete vendor category
+const doDeleteFilecategory = async ({
+  id
+}) => {
+  const data = await Vendorfilecategory.destroy({
+    where: {
+      id: id,
+    },
+  })
+  if (data == 0) throw new BadRequestError("Id Not Match");
+  return data[0];
+};
+// find the vendor_id for deleted
+const doCheckVendorforfilecategory = async ({
+  cat_id,
+}) => {
+  const vndrs = await Vendorfile.findOne({
+    where: {
+      cat_id
+    },
+  });
+  if (!vndrs) throw new NotFoundError('Agent not found!');
+  return vndrs;
+};
+
+
+
+
 
 
 
@@ -323,6 +518,14 @@ module.exports = {
   doUpdatevendor,
   doDeleteVendor,
   doStatus,
-  doCheckVendorforcategory
+  doCheckVendorforcategory,
+  doGetDetail,
+  doVendorFile,
+  doFilecategory,
+  doGetFilecategory,
+  doUpdateFileCategory,
+  doDeleteFilecategory,
+  doCheckVendorforfilecategory,
+  doDeleteVendorFiles
 };
 

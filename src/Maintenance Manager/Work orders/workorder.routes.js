@@ -9,7 +9,7 @@ module.exports = ({
   router.post('/work/add', fileUpload.imageUpload.single("attachments"), makeExpressCallback(WorkController.WorkAdd));
   router.get('/work/viewAll', makeExpressCallback(WorkController.getWork));
   router.delete('/work/delete/:id', makeExpressCallback(WorkController.Workdelete));
-  // router.put('/work/:id', makeExpressCallback(WorkController.updateWork));
+  router.get('/work/detail/:id', makeExpressCallback(WorkController.getDetail));
   router.put('/work/:id', fileUpload.imageUpload.single("attachments"), makeExpressCallback(WorkController.updateWork));
 
   router.post('/work/search', makeExpressCallback(WorkController.searchWork));

@@ -311,8 +311,6 @@ const doUpdatePropertyfeatures = async ({
   pro_id,
   check_list
 }) => {
-
-
   const users = await Propertyfeature.destroy({
     where: {
       pro_id: pro_id,

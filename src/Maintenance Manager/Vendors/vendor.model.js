@@ -54,6 +54,9 @@ module.exports = (sequelize, DataTypes) => {
     Vendor.belongsTo(models.State, {
       foreignKey: 'state_id',
     });
+    Vendor.hasMany(models.Vendorfile, {
+      foreignKey: 'vendor_id',
+    });
   }
 
   return Vendor;

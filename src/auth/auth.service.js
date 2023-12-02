@@ -3,7 +3,7 @@ const {
   forgetPasswordTemplate,
   RegisteredTemplate,
   UpdateProfileTemplate,
-  ChangePasswordTemplate ,
+  ChangePasswordTemplate,
   verifyTemplate,
   invitationChildTemplate,
   rejectInviteTemplate,
@@ -37,7 +37,7 @@ const bcrypt = require('bcryptjs');
 const {
   User,
   sequelize,
-  Email} = require('../db');
+  Email } = require('../db');
 const emailTransporter = require('../utils/email');
 // const sendGridTransporter = require('../utils/sendgrid');;
 const { generateJWT, verifyJWT } = require('../utils/jwt');
@@ -124,11 +124,11 @@ const dofrontRegister = async ({
     function setRoleById(id) {
       if (id == 1) {
         return "Asdmin";
-      } else if (id ==2) {
+      } else if (id == 2) {
         return "Owner";
       } else if (id == 3) {
         return "Agent";
-      }  else if (id == 4) {
+      } else if (id == 4) {
         return "Builder";
       }
       else {
@@ -139,7 +139,7 @@ const dofrontRegister = async ({
     console.log(role);
     const emailtempleate = await Email.findOne({
       where: {
-        id:10
+        id: 10
       },
     });
 
@@ -148,16 +148,16 @@ const dofrontRegister = async ({
       fromUser: "Property bull",
       fromEmail: "contact@propertybull.com",
       toEmail: email,
-      Name:name,
-      password: password, 
-      html:emailtempleate.dataValues.description,
-      subject:emailtempleate.dataValues.subject,
-      role:role,
-      mobile:mobile,
-      username:username,
-      site_url:'https://stage.propertybull.com'
+      Name: name,
+      password: password,
+      html: emailtempleate.dataValues.description,
+      subject: emailtempleate.dataValues.subject,
+      role: role,
+      mobile: mobile,
+      username: username,
+      site_url: 'https://stage.propertybull.com'
     });
- await emailTransporter.send(template)
+    await emailTransporter.send(template)
     return {
       userId: user.id,
       email,
@@ -467,7 +467,7 @@ const doEditUserProfile = async ({
     });
     const emailtempleate = await Email.findOne({
       where: {
-        id:30
+        id: 30
       },
     });
     let template;
@@ -475,14 +475,14 @@ const doEditUserProfile = async ({
       fromUser: "Property bull",
       fromEmail: "contact@propertybull.com",
       toEmail: userdata.username,
-      Name:userdata.name,
-      html:emailtempleate.dataValues.description,
-      subject:emailtempleate.dataValues.subject,
-      username:userdata.username,
-      site_url:'https://www.propertybull.com'
+      Name: userdata.name,
+      html: emailtempleate.dataValues.description,
+      subject: emailtempleate.dataValues.subject,
+      username: userdata.username,
+      site_url: 'https://www.propertybull.com'
     });
- await emailTransporter.send(template);
- if (data == 0) throw new BadRequestError("Id Not Match");
+    await emailTransporter.send(template);
+    if (data == 0) throw new BadRequestError("Id Not Match");
     return data[0];
   } else {
 
@@ -503,7 +503,7 @@ const doEditUserProfile = async ({
     });
     const emailtempleate = await Email.findOne({
       where: {
-        id:30
+        id: 30
       },
     });
     let template;
@@ -511,14 +511,14 @@ const doEditUserProfile = async ({
       fromUser: "Property bull",
       fromEmail: "contact@propertybull.com",
       toEmail: userdata.username,
-      Name:userdata.name,
-      html:emailtempleate.dataValues.description,
-      subject:emailtempleate.dataValues.subject,
-      username:userdata.username,
-      site_url:'https://stage.propertybull.com'
+      Name: userdata.name,
+      html: emailtempleate.dataValues.description,
+      subject: emailtempleate.dataValues.subject,
+      username: userdata.username,
+      site_url: 'https://stage.propertybull.com'
     });
- await emailTransporter.send(template);
- if (data == 0) throw new BadRequestError("Id Not Match");
+    await emailTransporter.send(template);
+    if (data == 0) throw new BadRequestError("Id Not Match");
     return data[0];
   }
 };
@@ -543,25 +543,25 @@ const doupdatepassword = async ({
     where: {
       id,
     },
-  });  const emailtempleate = await Email.findOne({
+  }); const emailtempleate = await Email.findOne({
     where: {
-      id:9
+      id: 9
     },
   });
   if (!emailtempleate) throw new NotFoundError('User not found!');
   let template;
-    template = ChangePasswordTemplate({
-      fromUser: "Property bull",
-      fromEmail: "contact@propertybull.com",
-      toEmail: userdata.dataValues.username,
-      Name:userdata.dataValues.name,
-      password: password, 
-      html:emailtempleate.dataValues.description,
-      subject:emailtempleate.dataValues.subject,
-      username:userdata.dataValues.username,
-      site_url:'https://stage.propertybull.com'
+  template = ChangePasswordTemplate({
+    fromUser: "Property bull",
+    fromEmail: "contact@propertybull.com",
+    toEmail: userdata.dataValues.username,
+    Name: userdata.dataValues.name,
+    password: password,
+    html: emailtempleate.dataValues.description,
+    subject: emailtempleate.dataValues.subject,
+    username: userdata.dataValues.username,
+    site_url: 'https://stage.propertybull.com'
 
-    });
+  });
   const result = await emailTransporter.send(template);
   if (data[0] == 0) throw new BadRequestError("Id Not Match");
   return data[0]
@@ -615,12 +615,12 @@ const doForgetPassword = async ({ User, username, BadRequestError, type }) => {
   if (!users) throw new NotFoundError('User not found!');
   const emailtempleate = await Email.findOne({
     where: {
-      id:8
+      id: 8
     },
   });
   if (!emailtempleate) throw new NotFoundError('User not found!');
-  const randomstring =  ("" + Math.random()).substring(2, 8);;
-  
+  const randomstring = ("" + Math.random()).substring(2, 8);;
+
   const user = await User.update(
     {
       password: randomstring,
@@ -634,15 +634,15 @@ const doForgetPassword = async ({ User, username, BadRequestError, type }) => {
   if (+user[0] === 0) throw new BadRequestError("Email not found");
   let email = username;
   let template;
-    template = forgetPasswordTemplate({
-      fromUser: "Property bull",
-      fromEmail: "contact@propertybull.com",
-      toEmail: email,
-      Name:users.dataValues.name,
-      password: randomstring, 
-      html:emailtempleate.dataValues.description,
-      subject:emailtempleate.dataValues.subject
-    });
+  template = forgetPasswordTemplate({
+    fromUser: "Property bull",
+    fromEmail: "contact@propertybull.com",
+    toEmail: email,
+    Name: users.dataValues.name,
+    password: randomstring,
+    html: emailtempleate.dataValues.description,
+    subject: emailtempleate.dataValues.subject
+  });
   const result = await emailTransporter.send(template);
   return {
     data: result,
@@ -668,6 +668,6 @@ module.exports = {
   doCheckUser,
   dofrontLogin,
   doForgetPassword,
-  
+
 };
 
